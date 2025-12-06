@@ -1,0 +1,11 @@
+ID,name,description,trade_ID_ID,active
+aaaabbbb-0000-0000-0000-aaaabbbb0001,Penal,Abogacía penal,33333333-3333-3333-3333-333333333333,true
+aaaabbbb-0000-0000-0000-aaaabbbb0002,Laboral,Abogacía laboral,33333333-3333-3333-3333-333333333333,true
+aaaabbbb-0000-0000-0000-aaaabbbb0003,Familia,Abogacía de familia,33333333-3333-3333-3333-333333333333,true
+aaaabbbb-0000-0000-0000-aaaabbbb0004,Comercial,Abogacía comercial,33333333-3333-3333-3333-333333333333,true
+aaaabbbb-0000-0000-0000-aaaabbbb1001,Reparaciones,Plomería reparaciones,11111111-1111-1111-1111-111111111111,true
+aaaabbbb-0000-0000-0000-aaaabbbb1002,Instalaciones,Plomería instalaciones,11111111-1111-1111-1111-111111111111,true
+aaaabbbb-0000-0000-0000-aaaabbbb1003,Cloacas–Destapes,Plomería cloacas y destapes,11111111-1111-1111-1111-111111111111,true
+aaaabbbb-0000-0000-0000-aaaabbbb2001,Instalaciones residenciales,Electricidad en hogares,22222222-2222-2222-2222-222222222222,true
+aaaabbbb-0000-0000-0000-aaaabbbb2002,Tableros,Armado y ajuste de tableros,22222222-2222-2222-2222-222222222222,true
+aaaabbbb-0000-0000-0000-aaaabbbb2003,Iluminación,Luces y artefactos,22222222-2222-2222-2222-222222222222,true

@@ -33,6 +33,24 @@
 - Datos de ejemplo cargados para mostrar el flujo end-to-end.
 - Preparado para agregar mapa, agenda, mensajería y reportes.
 
+## Guion de Demo (3–5 minutos)
+- Abrir “Ofertas de servicio” y filtrar por activo; ver columnas y navegar a “Profesional” y “Categoría”.
+- Abrir “Solicitudes” y ordenar por fecha; mostrar estado “pending” y ubicación.
+- Ejecutar asignación automática por cercanía y ver que la solicitud pasa a “assigned”.
+- Abrir “Asignaciones” ordenadas por fecha y navegar a la solicitud asignada.
+- Abrir “Profesionales”: ver perfil con secciones (Perfil, Contacto, Rating) y navegación al oficio.
+- Abrir “Reseñas”: mostrar calificaciones y cómo impactan en el rating del profesional.
+
+## Diferenciales Clave
+- Asignación inteligente por geolocalización (rápido y eficiente).
+- Transparencia por verificación de perfiles y rating promedio.
+- Organización clara: catálogo, filtros, páginas de detalle y trazabilidad.
+- Base sólida para escalar: Fiori (modo empresa) + Front moderno (modo público).
+
+## Estado y Roadmap
+- Estado actual: listo para demo con flujo completo (solicitudes → asignación → reseñas).
+- Próximos pasos: vista de mapa, agenda/horarios, mensajería in-app, paneles de métricas, roles y permisos.
+
 ## Próximos Pasos Opcionales
 - Vista de mapa para ver profesionales cercanos.
 - Agenda y disponibilidad por horarios.

@@ -9,6 +9,12 @@ service ServiceConnectService @(path: '/odata/v4/service-connect') {
   entity ClientRequest     as projection on serviceconnect.ClientRequest;
   entity Assignment        as projection on serviceconnect.Assignment;
   entity Review            as projection on serviceconnect.Review;
+  entity Specialization    as projection on serviceconnect.Specialization;
+  entity SubSpecialization as projection on serviceconnect.SubSpecialization;
+  entity ProfessionalSpecialization as projection on serviceconnect.ProfessionalSpecialization;
+  entity AvailabilitySlot  as projection on serviceconnect.AvailabilitySlot;
+  entity MessageThread     as projection on serviceconnect.MessageThread;
+  entity Message           as projection on serviceconnect.Message;
 
   action assignProfessional(
     clientRequest_ID : UUID,
@@ -19,6 +25,20 @@ service ServiceConnectService @(path: '/odata/v4/service-connect') {
     clientRequest_ID : UUID,
     maxRadiusKm      : Integer
   ) returns Assignment;
+
+  action findNearestProfessionals(
+    lat               : Decimal(9,6),
+    lng               : Decimal(9,6),
+    specialization_ID : UUID,
+    maxRadiusKm       : Integer,
+    limit             : Integer
+  ) returns array of serviceconnect.NearbyProfessionalResult;
+
+  action markMessageRead(message_ID : UUID) returns Boolean;
+
+  action metricsByCategory() returns array of serviceconnect.CategoryMetric;
+  action metricsByLocation() returns array of serviceconnect.LocationMetric;
+  action metricsByRating() returns array of serviceconnect.RatingBucket;
 }
 
 annotate ServiceConnectService.ServiceOffering with @UI.LineItem: [
@@ -26,6 +46,8 @@ annotate ServiceConnectService.ServiceOffering with @UI.LineItem: [
   { $Type: 'UI.DataField', Value: description,  Label: 'Descripción' },
   { $Type: 'UI.DataField', Value: priceRange,   Label: 'Rango de precio' },
   { $Type: 'UI.DataFieldWithNavigationPath', Value: category_ID, Label: 'Categoría', NavigationPropertyPath: category_ID },
+  { $Type: 'UI.DataFieldWithNavigationPath', Value: specialization_ID, Label: 'Especialidad', NavigationPropertyPath: specialization_ID },
+  { $Type: 'UI.DataFieldWithNavigationPath', Value: subSpecialization_ID, Label: 'Sub‑especialidad', NavigationPropertyPath: subSpecialization_ID },
   { $Type: 'UI.DataFieldWithNavigationPath', Value: professional_ID, Label: 'Profesional', NavigationPropertyPath: professional_ID },
   { $Type: 'UI.DataField', Value: active,       Label: 'Activo' },
   { $Type: 'UI.DataField', Value: createdAt,    Label: 'Creado' }
@@ -38,8 +60,9 @@ annotate ServiceConnectService.ServiceOffering with @UI: {
     Description: { Value: priceRange }
   },
   SelectionFields: [
-    { $PropertyPath: active },
-    { $PropertyPath: priceRange }
+    { $PropertyPath: description },
+    { $PropertyPath: priceRange },
+    { $PropertyPath: active }
   ],
   Facets: [
     { $Type: 'UI.ReferenceFacet', Label: 'Detalle', Target: '@UI.FieldGroup#Main' }
@@ -49,8 +72,14 @@ annotate ServiceConnectService.ServiceOffering with @UI: {
     { $Type: 'UI.DataField', Value: priceRange,  Label: 'Rango de precio' },
     { $Type: 'UI.DataField', Value: active,      Label: 'Activo' },
     { $Type: 'UI.DataField', Value: category_ID, Label: 'Categoría' },
+    { $Type: 'UI.DataFieldWithNavigationPath', Value: specialization_ID, Label: 'Especialidad', NavigationPropertyPath: specialization_ID },
+    { $Type: 'UI.DataFieldWithNavigationPath', Value: subSpecialization_ID, Label: 'Sub‑especialidad', NavigationPropertyPath: subSpecialization_ID },
     { $Type: 'UI.DataField', Value: professional_ID, Label: 'Profesional' }
   ]}
+};
+annotate ServiceConnectService.ServiceOffering with @UI.PresentationVariant: {
+  SortOrder: [ { Property: createdAt, Descending: true } ],
+  RequestAtLeast: [ description, priceRange, active ]
 };
 
 annotate ServiceConnectService.Professional with @UI.LineItem: [
@@ -73,7 +102,6 @@ annotate ServiceConnectService.Professional with @UI: {
   },
   SelectionFields: [
     { $PropertyPath: fullName },
-    { $PropertyPath: professionType },
     { $PropertyPath: location },
     { $PropertyPath: availability }
   ],
@@ -101,6 +129,8 @@ annotate ServiceConnectService.ClientRequest with @UI.LineItem: [
   { $Type: 'UI.DataField', Value: location,    Label: 'Ubicación' },
   { $Type: 'UI.DataFieldWithNavigationPath', Value: client_ID,   Label: 'Cliente',   NavigationPropertyPath: client_ID },
   { $Type: 'UI.DataFieldWithNavigationPath', Value: serviceCategory_ID, Label: 'Categoría', NavigationPropertyPath: serviceCategory_ID },
+  { $Type: 'UI.DataFieldWithNavigationPath', Value: specialization_ID, Label: 'Especialidad', NavigationPropertyPath: specialization_ID },
+  { $Type: 'UI.DataFieldWithNavigationPath', Value: subSpecialization_ID, Label: 'Sub‑especialidad', NavigationPropertyPath: subSpecialization_ID },
   { $Type: 'UI.DataField', Value: status,      Label: 'Estado' },
   { $Type: 'UI.DataField', Value: createdAt,   Label: 'Creado' }
 ];
@@ -125,8 +155,14 @@ annotate ServiceConnectService.ClientRequest with @UI: {
     { $Type: 'UI.DataField', Value: status,      Label: 'Estado' },
     { $Type: 'UI.DataField', Value: createdAt,   Label: 'Creado' },
     { $Type: 'UI.DataField', Value: client_ID,   Label: 'Cliente' },
-    { $Type: 'UI.DataField', Value: serviceCategory_ID, Label: 'Categoría' }
+    { $Type: 'UI.DataField', Value: serviceCategory_ID, Label: 'Categoría' },
+    { $Type: 'UI.DataField', Value: specialization_ID, Label: 'Especialidad' },
+    { $Type: 'UI.DataField', Value: subSpecialization_ID, Label: 'Sub‑especialidad' }
   ]}
+};
+annotate ServiceConnectService.ClientRequest with @UI.PresentationVariant: {
+  SortOrder: [ { Property: createdAt, Descending: true } ],
+  RequestAtLeast: [ description, status, location ]
 };
 
 annotate ServiceConnectService.Assignment with @UI.LineItem: [
@@ -154,10 +190,7 @@ annotate ServiceConnectService.Trade with @UI: {
     Title: { Value: name },
     Description: { Value: description }
   },
-  SelectionFields: [
-    { $PropertyPath: name },
-    { $PropertyPath: active }
-  ],
+  SelectionFields: [ { $PropertyPath: name }, { $PropertyPath: active } ],
   Facets: [
     { $Type: 'UI.ReferenceFacet', Label: 'Detalle', Target: '@UI.FieldGroup#Main' }
   ],
@@ -181,11 +214,7 @@ annotate ServiceConnectService.Client with @UI: {
     Title: { Value: fullName },
     Description: { Value: email }
   },
-  SelectionFields: [
-    { $PropertyPath: fullName },
-    { $PropertyPath: email },
-    { $PropertyPath: location }
-  ],
+  SelectionFields: [ { $PropertyPath: fullName }, { $PropertyPath: email }, { $PropertyPath: location } ],
   Facets: [
     { $Type: 'UI.ReferenceFacet', Label: 'Detalle', Target: '@UI.FieldGroup#Main' }
   ],
@@ -223,10 +252,11 @@ annotate ServiceConnectService.Assignment with @UI: {
     Title: { Value: status },
     Description: { Value: dateAssigned }
   },
-  SelectionFields: [
-    { $PropertyPath: status },
-    { $PropertyPath: dateAssigned }
-  ]
+  SelectionFields: [ { $PropertyPath: status }, { $PropertyPath: dateAssigned } ]
+};
+annotate ServiceConnectService.Assignment with @UI.PresentationVariant: {
+  SortOrder: [ { Property: dateAssigned, Descending: true } ],
+  RequestAtLeast: [ status, dateAssigned ]
 };
 
 annotate ServiceConnectService.Review with @UI: {
@@ -235,8 +265,114 @@ annotate ServiceConnectService.Review with @UI: {
     Title: { Value: rating },
     Description: { Value: comment }
   },
-  SelectionFields: [
-    { $PropertyPath: rating },
-    { $PropertyPath: createdAt }
-  ]
+  SelectionFields: [ { $PropertyPath: rating }, { $PropertyPath: createdAt } ]
+};
+annotate ServiceConnectService.Review with @UI.PresentationVariant: {
+  SortOrder: [ { Property: createdAt, Descending: true } ],
+  RequestAtLeast: [ rating, comment, createdAt ]
+};
+annotate ServiceConnectService.Specialization with @UI.LineItem: [
+  { $Type: 'UI.DataField', Value: name,        Label: 'Nombre' },
+  { $Type: 'UI.DataField', Value: description, Label: 'Descripción' },
+  { $Type: 'UI.DataFieldWithNavigationPath', Value: trade_ID, Label: 'Oficio', NavigationPropertyPath: trade_ID },
+  { $Type: 'UI.DataField', Value: active,      Label: 'Activo' }
+];
+annotate ServiceConnectService.Specialization with @UI: {
+  HeaderInfo: {
+    TypeName: 'Especialidad',
+    Title: { Value: name },
+    Description: { Value: description }
+  },
+  SelectionFields: [ { $PropertyPath: name }, { $PropertyPath: active } ],
+  Facets: [ { $Type: 'UI.ReferenceFacet', Label: 'Detalle', Target: '@UI.FieldGroup#Main' } ],
+  FieldGroup#Main: { Data: [
+    { $Type: 'UI.DataField', Value: name,        Label: 'Nombre' },
+    { $Type: 'UI.DataField', Value: description, Label: 'Descripción' },
+    { $Type: 'UI.DataFieldWithNavigationPath', Value: trade_ID, Label: 'Oficio', NavigationPropertyPath: trade_ID },
+    { $Type: 'UI.DataField', Value: active,      Label: 'Activo' }
+  ]}
+};
+
+annotate ServiceConnectService.SubSpecialization with @UI.LineItem: [
+  { $Type: 'UI.DataField', Value: name,        Label: 'Nombre' },
+  { $Type: 'UI.DataField', Value: description, Label: 'Descripción' },
+  { $Type: 'UI.DataFieldWithNavigationPath', Value: specialization_ID, Label: 'Especialidad', NavigationPropertyPath: specialization_ID },
+  { $Type: 'UI.DataField', Value: active,      Label: 'Activo' }
+];
+annotate ServiceConnectService.SubSpecialization with @UI: {
+  HeaderInfo: {
+    TypeName: 'Sub‑especialidad',
+    Title: { Value: name },
+    Description: { Value: description }
+  },
+  SelectionFields: [ { $PropertyPath: name }, { $PropertyPath: active } ],
+  Facets: [ { $Type: 'UI.ReferenceFacet', Label: 'Detalle', Target: '@UI.FieldGroup#Main' } ],
+  FieldGroup#Main: { Data: [
+    { $Type: 'UI.DataField', Value: name,        Label: 'Nombre' },
+    { $Type: 'UI.DataField', Value: description, Label: 'Descripción' },
+    { $Type: 'UI.DataFieldWithNavigationPath', Value: specialization_ID, Label: 'Especialidad', NavigationPropertyPath: specialization_ID },
+    { $Type: 'UI.DataField', Value: active,      Label: 'Activo' }
+  ]}
+};
+
+annotate ServiceConnectService.ProfessionalSpecialization with @UI.LineItem: [
+  { $Type: 'UI.DataFieldWithNavigationPath', Value: professional_ID, Label: 'Profesional', NavigationPropertyPath: professional_ID },
+  { $Type: 'UI.DataFieldWithNavigationPath', Value: specialization_ID, Label: 'Especialidad', NavigationPropertyPath: specialization_ID },
+  { $Type: 'UI.DataField', Value: primary, Label: 'Principal' },
+  { $Type: 'UI.DataField', Value: createdAt, Label: 'Creado' }
+];
+annotate ServiceConnectService.ProfessionalSpecialization with @UI: {
+  HeaderInfo: {
+    TypeName: 'Vínculo Profesional–Especialidad',
+    Title: { Value: primary },
+    Description: { Value: createdAt }
+  },
+  SelectionFields: [ { $PropertyPath: primary }, { $PropertyPath: createdAt } ]
+};
+annotate ServiceConnectService.AvailabilitySlot with @UI.LineItem: [
+  { $Type: 'UI.DataFieldWithNavigationPath', Value: professional_ID, Label: 'Profesional', NavigationPropertyPath: professional_ID },
+  { $Type: 'UI.DataField', Value: dayOfWeek, Label: 'Día' },
+  { $Type: 'UI.DataField', Value: startTime, Label: 'Desde' },
+  { $Type: 'UI.DataField', Value: endTime, Label: 'Hasta' },
+  { $Type: 'UI.DataField', Value: urgent, Label: 'Urgencias' },
+  { $Type: 'UI.DataField', Value: isActive, Label: 'Activo' }
+];
+annotate ServiceConnectService.AvailabilitySlot with @UI: {
+  HeaderInfo: {
+    TypeName: 'Disponibilidad',
+    Title: { Value: startTime },
+    Description: { Value: endTime }
+  },
+  SelectionFields: [ { $PropertyPath: dayOfWeek }, { $PropertyPath: isActive } ]
+};
+
+annotate ServiceConnectService.MessageThread with @UI.LineItem: [
+  { $Type: 'UI.DataFieldWithNavigationPath', Value: clientRequest_ID, Label: 'Solicitud', NavigationPropertyPath: clientRequest_ID },
+  { $Type: 'UI.DataFieldWithNavigationPath', Value: professional_ID, Label: 'Profesional', NavigationPropertyPath: professional_ID },
+  { $Type: 'UI.DataField', Value: status, Label: 'Estado' },
+  { $Type: 'UI.DataField', Value: createdAt, Label: 'Creado' }
+];
+annotate ServiceConnectService.MessageThread with @UI: {
+  HeaderInfo: {
+    TypeName: 'Conversación',
+    Title: { Value: status },
+    Description: { Value: createdAt }
+  },
+  SelectionFields: [ { $PropertyPath: status }, { $PropertyPath: createdAt } ]
+};
+
+annotate ServiceConnectService.Message with @UI.LineItem: [
+  { $Type: 'UI.DataFieldWithNavigationPath', Value: thread_ID, Label: 'Hilo', NavigationPropertyPath: thread_ID },
+  { $Type: 'UI.DataField', Value: senderRole, Label: 'Rol' },
+  { $Type: 'UI.DataField', Value: content, Label: 'Mensaje' },
+  { $Type: 'UI.DataField', Value: createdAt, Label: 'Creado' },
+  { $Type: 'UI.DataField', Value: isRead, Label: 'Leído' }
+];
+annotate ServiceConnectService.Message with @UI: {
+  HeaderInfo: {
+    TypeName: 'Mensaje',
+    Title: { Value: senderRole },
+    Description: { Value: createdAt }
+  },
+  SelectionFields: [ { $PropertyPath: senderRole }, { $PropertyPath: isRead } ]
 };

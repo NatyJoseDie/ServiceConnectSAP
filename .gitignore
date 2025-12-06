@@ -16,6 +16,8 @@ Thumbs.db
 # Local databases and build artifacts
 db/*.db
 db/sqlite.db
+db.sqlite
+out_*.xml
 dist/
 build/
 

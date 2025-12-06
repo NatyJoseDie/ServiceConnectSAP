@@ -1,0 +1,7 @@
+ID,name,description,specialization_ID_ID,active
+bbbbcccc-0000-0000-0000-bbbbcccc0001,Penal económico,Delitos económicos,aaaabbbb-0000-0000-0000-aaaabbbb0001,true
+bbbbcccc-0000-0000-0000-bbbbcccc0002,Accidentes de trabajo,Reclamos laborales,aaaabbbb-0000-0000-0000-aaaabbbb0002,true
+bbbbcccc-0000-0000-0000-bbbbcccc0003,Sucesiones,Herencias y sucesiones,aaaabbbb-0000-0000-0000-aaaabbbb0003,true
+bbbbcccc-0000-0000-0000-bbbbcccc1001,Cámara cloacal,Inspección con cámara,aaaabbbb-0000-0000-0000-aaaabbbb1003,true
+bbbbcccc-0000-0000-0000-bbbbcccc1002,Bombas de agua,Instalación y reparación,aaaabbbb-0000-0000-0000-aaaabbbb1002,true
+bbbbcccc-0000-0000-0000-bbbbcccc2001,Luces LED,Instalación y recambio,aaaabbbb-0000-0000-0000-aaaabbbb2003,true
