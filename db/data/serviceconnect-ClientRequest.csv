@@ -1,0 +1,3 @@
+ID,clientName,clientEmail,client_ID_ID,serviceCategory_ID_ID,description,location,latitude,longitude,status,createdAt
+99999999-9999-9999-9999-999999999999,Ana Gómez,ana.gomez@example.com,aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa,44444444-4444-4444-4444-444444444444,Perdida de agua en baño,CABA,-34.603722,-58.381592,pending,2025-01-01T10:00:00Z
+12121212-1212-1212-1212-121212121212,Carlos Díaz,carlos.diaz@example.com,bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb,55555555-5555-5555-5555-555555555555,Instalar tomas adicionales,La Plata,-34.921450,-57.954537,pending,2025-01-01T10:00:00Z

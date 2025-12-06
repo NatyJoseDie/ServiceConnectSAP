@@ -1,0 +1,23 @@
+{
+  "name": "serviceconnect",
+  "version": "0.1.0",
+  "private": true,
+  "description": "ServiceConnect – Plataforma de Profesionales & Oficios (SAP CAP)",
+  "scripts": {
+    "start": "cds run",
+    "watch": "cds watch",
+    "deploy": "cds deploy --to sqlite:db/sqlite.db"
+  },
+  "dependencies": {
+    "@sap/cds": "^7.9.5",
+    "express": "^4.18.2",
+    "sqlite3": "^5.1.7",
+    "nodemailer": "^6.9.8"
+  },
+  "devDependencies": {
+    "@sap/cds-dk": "^7.9.5"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
