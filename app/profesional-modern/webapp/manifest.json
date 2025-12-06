@@ -1,0 +1,49 @@
+{
+  "_version": "1.12.0",
+  "sap.app": {
+    "id": "app.profesional-modern",
+    "type": "application",
+    "title": "UI Moderna · Profesionales",
+    "i18n": "i18n/i18n.properties"
+  },
+  "sap.ui5": {
+    "dependencies": {
+      "libs": { "sap.m": {}, "sap.f": {}, "sap.ui.layout": {} }
+    },
+    "contentDensities": { "compact": true, "cozy": true },
+    "models": {
+      "": {
+        "type": "sap.ui.model.odata.v4.ODataModel",
+        "settings": {
+          "synchronizationMode": "None",
+          "operationMode": "Server",
+          "serviceUrl": "/odata/v4/service-connect/"
+        }
+      }
+    },
+    "resources": { "css": [ { "uri": "css/custom.css" } ] },
+    "rootView": { "viewName": "app.profesional-modern.view.App", "type": "XML", "async": true },
+    "routing": {
+      "config": {
+        "routerClass": "sap.f.routing.Router",
+        "viewType": "XML",
+        "viewPath": "app.profesional-modern.view",
+        "controlId": "fcl",
+        "controlAggregation": "beginColumnPages",
+        "async": true
+      },
+      "routes": [
+        { "name": "Route_Master", "pattern": "", "target": ["master"] },
+        { "name": "Route_Detail", "pattern": "professional/{professionalId}", "target": ["detail"] },
+        { "name": "Route_Edit", "pattern": "professional/{professionalId}/edit", "target": ["edit"] },
+        { "name": "Route_Chat", "pattern": "chat/{threadId}", "target": ["chat"] }
+      ],
+      "targets": {
+        "master": { "viewName": "Master", "viewLevel": 1, "controlAggregation": "beginColumnPages" },
+        "detail": { "viewName": "ProfessionalDetail", "viewLevel": 2, "controlAggregation": "midColumnPages" },
+        "edit": { "viewName": "ProfessionalEdit", "viewLevel": 3, "controlAggregation": "endColumnPages" },
+        "chat": { "viewName": "Chat", "viewLevel": 3, "controlAggregation": "endColumnPages" }
+      }
+    }
+  }
+}

@@ -85,6 +85,39 @@ Content-Type: application/json
 - Preparar perfil `production` con HANA Cloud y deploy en BTP.
   - Agregar `requires.db.kind: hana` y dependencias HANA.
 
+## UI5 moderna sobre CAP (Work Zone style)
+- App SAPUI5 servida desde CAP: `http://localhost:4004/ui/profesional-modern/`.
+- Tema: `sap_horizon_dark` con CSS personalizado en `/app/profesional-modern/webapp/css/custom.css`.
+- Layout: `sap.f.FlexibleColumnLayout` y `sap.f.GridContainer` para tarjetas y diseño responsive.
+- Routing en `manifest.json`:
+  - `Route_Master` → lista de profesionales (columna 1).
+  - `Route_Detail` → detalle de profesional (columna 2).
+  - `Route_Edit` → edición (columna 3).
+  - `Route_Chat` → chat (columna 3) con parámetro `threadId`.
+- Vistas y controladores principales:
+  - `view/App.view.xml` → FCL.
+  - `view/Master.view.xml` + `controller/Master.controller.js` → toolbar, filtros, cards de estadísticas y acciones rápidas.
+  - `view/ProfessionalDetail.view.xml` + `controller/ProfessionalDetail.controller.js` → perfil y servicios.
+  - `view/ProfessionalEdit.view.xml` + `controller/ProfessionalEdit.controller.js` → formulario editable con `submitBatch()`.
+  - `view/Chat.view.xml` + `controller/Chat.controller.js` → chat tipo WhatsApp con burbujas.
+- Inyección de CSS: `manifest.json → sap.ui5.resources.css: css/custom.css`.
+- Buenas prácticas UI5:
+  - Mantener bindings OData V4 en `manifest.json` con `serviceUrl: /odata/v4/service-connect/`.
+  - Usar `ObjectStatus` y `ObjectNumber` para estados y KPIs.
+  - Delegar navegación a `sap.f.routing.Router` para columnas FCL.
+
+## Despliegue en SAP BTP (resumen)
+- Opción rápida (Cloud Foundry, demo en SQLite):
+  - `cf login`, `cf push` con `manifest.yml` iniciando `npm start`.
+  - Sirve UI5 desde `srv/server.js` en `/ui/profesional-modern/`.
+- Opción recomendada (Approuter + HANA Cloud):
+  - `requires.db.kind: hana` y HDI container en `mta.yaml`.
+  - Approuter con `xs-app.json`:
+    - Rutas estáticas a `/app/profesional-modern/webapp`.
+    - Proxy `/odata/v4/**` al backend CAP.
+  - `mbt build` y `cf deploy` del `.mtar`.
+  - Autenticación con XSUAA y roles en CAP según `@requires`.
+
 ## Plan PRO de funcionalidades
 
 ### 1. Calificaciones (Reviews + rating promedio)

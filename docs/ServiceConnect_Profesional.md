@@ -48,6 +48,48 @@ package.json         → Scripts, dependencias
   - `POST /autoAssignNearest`
 - Metadata OData: `/odata/v4/service-connect/$metadata`
 
+## UI Frontends
+- Fiori Elements Preview con anotaciones UI en `srv/service.cds`.
+- SAPUI5 moderna (Work Zone style) servida en: `http://localhost:4004/ui/profesional-modern/`.
+  - Tema `sap_horizon_dark` y CSS custom en `app/profesional-modern/webapp/css/custom.css`.
+  - Cards de estadísticas y acciones rápidas.
+  - Tabla con íconos y badges de disponibilidad.
+
+## FlexibleColumnLayout y Routing
+- `manifest.json` define rutas y targets:
+  - `Route_Master` → `view/Master.view.xml` (lista en columna 1).
+  - `Route_Detail` → `view/ProfessionalDetail.view.xml` (detalle en columna 2).
+  - `Route_Edit` → `view/ProfessionalEdit.view.xml` (formulario en columna 3).
+  - `Route_Chat` → `view/Chat.view.xml` (chat en columna 3).
+- Navegación:
+  - `navTo("Route_Detail", { professionalId: ID })` desde la tabla.
+  - `navTo("Route_Edit", { professionalId: ID })` desde el botón “Editar”.
+  - `navTo("Route_Chat", { threadId })` desde “Enviar mensaje”.
+
+## Vistas y Controladores
+- `view/App.view.xml` → `sap.f.FlexibleColumnLayout`.
+- `view/Master.view.xml` + `controller/Master.controller.js`:
+  - Búsqueda, filtros de rating y disponibilidad, orden por rating.
+  - KPIs: total y promedio de `rating`.
+- `view/ProfessionalDetail.view.xml` + `controller/ProfessionalDetail.controller.js`:
+  - Card con datos del profesional.
+  - Lista de `ServiceOffering` filtrada por profesional.
+  - Botones “Editar” y “Enviar mensaje”.
+- `view/ProfessionalEdit.view.xml` + `controller/ProfessionalEdit.controller.js`:
+  - Form responsive con `StepInput` y `Select` para disponibilidad.
+  - Guarda con `submitBatch()` y retorna al detalle.
+- `view/Chat.view.xml` + `controller/Chat.controller.js`:
+  - Lista vertical, burbujas: profesional derecha (azul), cliente izquierda (gris).
+  - Envío: `POST /odata/v4/service-connect/Message` y recarga de mensajes.
+
+## CSS Personalizado
+- Archivo: `app/profesional-modern/webapp/css/custom.css`.
+- Variables, tema oscuro y estilos de burbujas.
+
+## Cómo abrir
+- UI moderna: `http://localhost:4004/ui/profesional-modern/`.
+- Servicio: `http://localhost:4004/odata/v4/service-connect/`.
+
 ## Modelo de Datos (CDS)
 - <span style="color:#0b5394">Professional</span>
   - Datos personales

@@ -1,0 +1,8 @@
+:root{--card-radius:12px;--space:16px}
+body{background:#12171c}
+.sapUiBody .sapMPage{background-color:#12171c}
+.sapFCard{border-radius:var(--card-radius)}
+.bubble-left{background:#2b2f36;color:#e0e6ed;border-radius:10px;padding:10px;max-width:60%}
+.bubble-right{background:#1b5e9f;color:#fff;border-radius:10px;padding:10px;max-width:60%}
+.sapMToolbar{border-radius:var(--card-radius)}
+.sapMTable .sapMListTblCell{border-bottom:1px solid rgba(255,255,255,0.06)}

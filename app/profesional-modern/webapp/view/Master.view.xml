@@ -1,0 +1,82 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns:f="sap.f" controllerName="app.profesional-modern.controller.Master">
+  <f:DynamicPage headerExpanded="true" toggleHeaderOnTitleClick="false">
+    <f:title>
+      <m:Title text="Profesionales" level="H2" />
+    </f:title>
+    <f:header>
+      <f:DynamicPageHeader>
+        <m:Toolbar>
+          <m:Title text="Catálogo" />
+          <m:ToolbarSpacer />
+          <m:Button icon="sap-icon://refresh" type="Transparent" press="onRefresh" />
+          <m:Button icon="sap-icon://sort" type="Transparent" press="onSortRating" />
+          <m:Button icon="sap-icon://filter" type="Transparent" press="onFilterAvail" />
+        </m:Toolbar>
+      </f:DynamicPageHeader>
+    </f:header>
+    <f:content>
+      <f:GridContainer columns="XL4 L3 M2 S1" width="100%">
+        <f:items>
+          <f:Card width="auto">
+            <f:CardHeader titleText="Estadísticas" subtitleText="Profesionales" statusText="General" />
+            <f:CardContent>
+              <m:HBox justifyContent="SpaceAround">
+                <m:ObjectNumber number="{vm>/count}" unit="Total" />
+                <m:ObjectNumber number="{vm>/avg}" unit="Rating" />
+              </m:HBox>
+            </f:CardContent>
+          </f:Card>
+          <f:Card width="auto">
+            <f:CardHeader titleText="Acciones" subtitleText="Rápidas" />
+            <f:CardContent>
+              <m:HBox>
+                <m:Button text="Nuevo" icon="sap-icon://add" type="Emphasized" press="onNew" />
+                <m:Button text="Chat" icon="sap-icon://message-popup" press="onOpenChat" />
+              </m:HBox>
+            </f:CardContent>
+          </f:Card>
+        </f:items>
+      </f:GridContainer>
+      <m:VBox>
+        <m:Toolbar>
+          <m:SearchField width="20rem" placeholder="Buscar nombre" liveChange="onSearch" />
+          <m:ToolbarSpacer />
+          <m:Select width="12rem" change="onRatingMin">
+            <m:items>
+              <m:Item key="0" text="Rating: todos" />
+              <m:Item key="4.0" text="Rating ≥ 4.0" />
+              <m:Item key="4.5" text="Rating ≥ 4.5" />
+            </m:items>
+          </m:Select>
+          <m:SegmentedButton selectionChange="onAvailChange">
+            <m:items>
+              <m:SegmentedButtonItem key="all" text="Todos" />
+              <m:SegmentedButtonItem key="yes" text="Disponibles" />
+              <m:SegmentedButtonItem key="no" text="No disponibles" />
+            </m:items>
+          </m:SegmentedButton>
+        </m:Toolbar>
+        <m:Table id="tblProf" growing="true" growingScrollToLoad="true" mode="SingleSelectMaster" itemPress="onItemPress">
+          <m:columns>
+            <m:Column><m:Text text="Nombre" /></m:Column>
+            <m:Column><m:Text text="Profesión" /></m:Column>
+            <m:Column><m:Text text="Ubicación" /></m:Column>
+            <m:Column><m:Text text="Rating" /></m:Column>
+            <m:Column><m:Text text="Disponible" /></m:Column>
+          </m:columns>
+          <m:items>
+            <m:ColumnListItem type="Active">
+              <m:cells>
+                <m:ObjectIdentifier title="{fullName}" icon="sap-icon://employee" />
+                <m:Text text="{professionType}" />
+                <m:Text text="{location}" />
+                <m:ObjectNumber number="{rating}" />
+                <m:ObjectStatus text="{= ${availability} ? 'Sí' : 'No' }" state="{= ${availability} ? 'Success' : 'Error' }" />
+              </m:cells>
+            </m:ColumnListItem>
+          </m:items>
+        </m:Table>
+      </m:VBox>
+    </f:content>
+  </f:DynamicPage>
+</mvc:View>
