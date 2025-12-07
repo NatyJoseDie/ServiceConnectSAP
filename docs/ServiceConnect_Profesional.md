@@ -55,12 +55,62 @@ package.json         → Scripts, dependencias
   - Cards de estadísticas y acciones rápidas.
   - Tabla con íconos y badges de disponibilidad.
 
+## CRUD de Profesionales (UI + OData)
+- Alta (POST) desde UI:
+  - Formulario en `app/profesional-modern/webapp/view/ProfessionalRegister.view.xml:1`.
+  - Lógica de creación en `app/profesional-modern/webapp/controller/ProfessionalRegister.controller.js:4`.
+  - Al registrar, se crea automáticamente:
+    - `MessageThread` inicial vinculado al profesional (`ProfessionalRegister.controller.js:6`–`7`).
+    - `ServiceOffering` por defecto para demo (`ProfessionalRegister.controller.js:8`).
+- Edición (PATCH) desde UI:
+  - Vista `app/profesional-modern/webapp/view/ProfessionalEdit.view.xml:11`.
+  - Guardado con `submitBatch()` en `app/profesional-modern/webapp/controller/ProfessionalEdit.controller.js:5`–`6`.
+- Eliminación (DELETE) desde UI:
+  - Botón en `app/profesional-modern/webapp/view/ProfessionalDetail.view.xml:9`.
+  - Acción `context.delete()` en `app/profesional-modern/webapp/controller/ProfessionalDetail.controller.js:7`.
+- Navegación FCL:
+  - Master → `navTo('Route_Detail', { professionalId })` (`app/profesional-modern/webapp/controller/Master.controller.js:13`).
+  - Detalle → `navTo('Route_Edit', ...)` y `navTo('Route_Chat', ...)` (`ProfessionalDetail.controller.js:5`–`6`).
+  - Registro → `navTo('Route_Register')` (`Master.controller.js:14`).
+
+### Ejemplos OData (API)
+- Crear profesional:
+```
+POST /odata/v4/service-connect/Professional
+Content-Type: application/json
+{
+  "ID": "<uuid>",
+  "fullName": "Juan Pérez",
+  "professionType": "plumber",
+  "trade_ID_ID": "<uuid-trade>",
+  "registrationNumber": "MAT-12345",
+  "email": "juan.perez@example.com",
+  "phone": "+54 11 5555-5555",
+  "location": "CABA",
+  "rating": 4.5,
+  "availability": true,
+  "createdAt": "2025-01-01T10:00:00Z",
+  "updatedAt": "2025-01-01T10:00:00Z"
+}
+```
+- Editar profesional:
+```
+PATCH /odata/v4/service-connect/Professional('<ID>')
+Content-Type: application/json
+{ "availability": false, "rating": 4.8 }
+```
+- Eliminar profesional:
+```
+DELETE /odata/v4/service-connect/Professional('<ID>')
+```
+
 ## FlexibleColumnLayout y Routing
 - `manifest.json` define rutas y targets:
   - `Route_Master` → `view/Master.view.xml` (lista en columna 1).
   - `Route_Detail` → `view/ProfessionalDetail.view.xml` (detalle en columna 2).
   - `Route_Edit` → `view/ProfessionalEdit.view.xml` (formulario en columna 3).
   - `Route_Chat` → `view/Chat.view.xml` (chat en columna 3).
+  - `Route_Register` → `view/ProfessionalRegister.view.xml` (alta en columna 3).
 - Navegación:
   - `navTo("Route_Detail", { professionalId: ID })` desde la tabla.
   - `navTo("Route_Edit", { professionalId: ID })` desde el botón “Editar”.
