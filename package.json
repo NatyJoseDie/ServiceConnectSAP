@@ -11,13 +11,22 @@
   "dependencies": {
     "@sap/cds": "^7.9.5",
     "express": "^4.18.2",
-    "sqlite3": "^5.1.7",
-    "nodemailer": "^6.9.8"
+    "nodemailer": "^6.9.8",
+    "sqlite3": "^5.1.7"
   },
   "devDependencies": {
-    "@sap/cds-dk": "^7.9.5"
+    "@sap/cds-dk": "^7.9.5",
+    "@ui5/cli": "^4.0.38"
   },
   "engines": {
     "node": ">=18"
+  },
+  "cds": {
+    "server": {
+      "cors": {
+        "origin": "*",
+        "methods": "GET,HEAD,PUT,PATCH,POST,DELETE"
+      }
+    }
   }
 }

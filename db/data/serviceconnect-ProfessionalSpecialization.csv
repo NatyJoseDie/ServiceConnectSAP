@@ -1,4 +1,4 @@
-ID,professional_ID_ID,specialization_ID_ID,primary,createdAt
+ID,professional_ID,specialization_ID,primary,createdAt
 ccccdddd-0000-0000-0000-ccccdddd0001,77777777-7777-7777-7777-777777777777,aaaabbbb-0000-0000-0000-aaaabbbb1001,true,2025-01-01T10:00:00Z
 ccccdddd-0000-0000-0000-ccccdddd0002,77777777-7777-7777-7777-777777777777,aaaabbbb-0000-0000-0000-aaaabbbb1003,false,2025-01-01T10:00:00Z
 ccccdddd-0000-0000-0000-ccccdddd0003,88888888-8888-8888-8888-888888888888,aaaabbbb-0000-0000-0000-aaaabbbb2001,true,2025-01-01T10:00:00Z

@@ -1,0 +1,5 @@
+ID,fullName,trade_ID,email,phone,location,latitude,longitude,rating,availability,avatarUrl,createdAt,updatedAt
+11112222-3333-4444-5555-666677778888,Carlos Gómez,11111111-1111-1111-1111-111111111111,carlos.plomeria@example.com,+54 11 5555-0001,CABA,-34.6037,-58.3816,0,true,https://i.pravatar.cc/150?img=11,2025-01-01T10:00:00Z,2025-01-01T10:00:00Z
+99990000-aaaa-bbbb-cccc-ddddeeeeffff,Lucía Fernández,22222222-2222-2222-2222-222222222222,lucia.electricidad@example.com,+54 11 5555-0002,CABA,-34.6037,-58.3816,0,true,https://i.pravatar.cc/150?img=32,2025-01-01T10:00:00Z,2025-01-01T10:00:00Z
+77777777-7777-7777-7777-777777777777,Juan Pérez,11111111-1111-1111-1111-111111111111,juan.perez@example.com,+54 11 5555-5555,CABA,-34.603722,-58.381592,4.5,true,https://i.pravatar.cc/150?img=12,2025-01-01T10:00:00Z,2025-01-01T10:00:00Z
+88888888-8888-8888-8888-888888888888,María López,22222222-2222-2222-2222-222222222222,maria.lopez@example.com,+54 11 5555-5556,CABA,-34.603722,-58.381592,4.2,true,https://i.pravatar.cc/150?img=25,2025-01-01T10:00:00Z,2025-01-01T10:00:00Z

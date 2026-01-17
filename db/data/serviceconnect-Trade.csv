@@ -1,5 +1,7 @@
-ID,name,description,active
-11111111-1111-1111-1111-111111111111,plumber,Plomería general,true
-22222222-2222-2222-2222-222222222222,electrician,Instalaciones eléctricas,true
-33333333-3333-3333-3333-333333333333,lawyer,Servicios legales,true
-44444444-aaaa-aaaa-aaaa-444444444444,gasfitter,Instalaciones y reparaciones de gas,true
+ID,name,description,active,domain
+11111111-1111-1111-1111-111111111111,plumber,Plomería general,true,tradesman
+22222222-2222-2222-2222-222222222222,electrician,Instalaciones eléctricas,true,tradesman
+33333333-3333-3333-3333-333333333333,lawyer,Servicios legales,true,professional
+44444444-aaaa-aaaa-aaaa-444444444444,gasfitter,Instalaciones y reparaciones de gas,true,tradesman
+55555555-aaaa-aaaa-aaaa-555555555555,accountant,Servicios contables,true,professional
+66666666-aaaa-aaaa-aaaa-666666666666,architect,Arquitectura y diseño,true,professional

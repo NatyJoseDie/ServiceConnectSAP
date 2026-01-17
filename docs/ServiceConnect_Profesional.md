@@ -48,97 +48,17 @@ package.json         → Scripts, dependencias
   - `POST /autoAssignNearest`
 - Metadata OData: `/odata/v4/service-connect/$metadata`
 
-## UI Frontends
-- Fiori Elements Preview con anotaciones UI en `srv/service.cds`.
-- SAPUI5 moderna (Work Zone style) servida en: `http://localhost:4004/ui/profesional-modern/`.
-  - Tema `sap_horizon_dark` y CSS custom en `app/profesional-modern/webapp/css/custom.css`.
-  - Cards de estadísticas y acciones rápidas.
-  - Tabla con íconos y badges de disponibilidad.
+## Herramientas de Visualización (Backend-driven)
+- **Fiori Elements Preview**: Interfaz de gestión automática generada a partir de anotaciones en `srv/service.cds`.
+  - Permite visualizar y gestionar datos sin código frontend.
+  - Endpoints de previsualización:
+      - Profesionales: `http://localhost:4004/$fiori-preview/ServiceConnectService/Professional`
+      - Ofertas: `http://localhost:4004/$fiori-preview/ServiceConnectService/ServiceOffering`
+      - Solicitudes: `http://localhost:4004/$fiori-preview/ServiceConnectService/ClientRequest`
 
-## CRUD de Profesionales (UI + OData)
-- Alta (POST) desde UI:
-  - Formulario en `app/profesional-modern/webapp/view/ProfessionalRegister.view.xml:1`.
-  - Lógica de creación en `app/profesional-modern/webapp/controller/ProfessionalRegister.controller.js:4`.
-  - Al registrar, se crea automáticamente:
-    - `MessageThread` inicial vinculado al profesional (`ProfessionalRegister.controller.js:6`–`7`).
-    - `ServiceOffering` por defecto para demo (`ProfessionalRegister.controller.js:8`).
-- Edición (PATCH) desde UI:
-  - Vista `app/profesional-modern/webapp/view/ProfessionalEdit.view.xml:11`.
-  - Guardado con `submitBatch()` en `app/profesional-modern/webapp/controller/ProfessionalEdit.controller.js:5`–`6`.
-- Eliminación (DELETE) desde UI:
-  - Botón en `app/profesional-modern/webapp/view/ProfessionalDetail.view.xml:9`.
-  - Acción `context.delete()` en `app/profesional-modern/webapp/controller/ProfessionalDetail.controller.js:7`.
-- Navegación FCL:
-  - Master → `navTo('Route_Detail', { professionalId })` (`app/profesional-modern/webapp/controller/Master.controller.js:13`).
-  - Detalle → `navTo('Route_Edit', ...)` y `navTo('Route_Chat', ...)` (`ProfessionalDetail.controller.js:5`–`6`).
-  - Registro → `navTo('Route_Register')` (`Master.controller.js:14`).
-
-### Ejemplos OData (API)
-- Crear profesional:
-```
-POST /odata/v4/service-connect/Professional
-Content-Type: application/json
-{
-  "ID": "<uuid>",
-  "fullName": "Juan Pérez",
-  "professionType": "plumber",
-  "trade_ID_ID": "<uuid-trade>",
-  "registrationNumber": "MAT-12345",
-  "email": "juan.perez@example.com",
-  "phone": "+54 11 5555-5555",
-  "location": "CABA",
-  "rating": 4.5,
-  "availability": true,
-  "createdAt": "2025-01-01T10:00:00Z",
-  "updatedAt": "2025-01-01T10:00:00Z"
-}
-```
-- Editar profesional:
-```
-PATCH /odata/v4/service-connect/Professional('<ID>')
-Content-Type: application/json
-{ "availability": false, "rating": 4.8 }
-```
-- Eliminar profesional:
-```
-DELETE /odata/v4/service-connect/Professional('<ID>')
-```
-
-## FlexibleColumnLayout y Routing
-- `manifest.json` define rutas y targets:
-  - `Route_Master` → `view/Master.view.xml` (lista en columna 1).
-  - `Route_Detail` → `view/ProfessionalDetail.view.xml` (detalle en columna 2).
-  - `Route_Edit` → `view/ProfessionalEdit.view.xml` (formulario en columna 3).
-  - `Route_Chat` → `view/Chat.view.xml` (chat en columna 3).
-  - `Route_Register` → `view/ProfessionalRegister.view.xml` (alta en columna 3).
-- Navegación:
-  - `navTo("Route_Detail", { professionalId: ID })` desde la tabla.
-  - `navTo("Route_Edit", { professionalId: ID })` desde el botón “Editar”.
-  - `navTo("Route_Chat", { threadId })` desde “Enviar mensaje”.
-
-## Vistas y Controladores
-- `view/App.view.xml` → `sap.f.FlexibleColumnLayout`.
-- `view/Master.view.xml` + `controller/Master.controller.js`:
-  - Búsqueda, filtros de rating y disponibilidad, orden por rating.
-  - KPIs: total y promedio de `rating`.
-- `view/ProfessionalDetail.view.xml` + `controller/ProfessionalDetail.controller.js`:
-  - Card con datos del profesional.
-  - Lista de `ServiceOffering` filtrada por profesional.
-  - Botones “Editar” y “Enviar mensaje”.
-- `view/ProfessionalEdit.view.xml` + `controller/ProfessionalEdit.controller.js`:
-  - Form responsive con `StepInput` y `Select` para disponibilidad.
-  - Guarda con `submitBatch()` y retorna al detalle.
-- `view/Chat.view.xml` + `controller/Chat.controller.js`:
-  - Lista vertical, burbujas: profesional derecha (azul), cliente izquierda (gris).
-  - Envío: `POST /odata/v4/service-connect/Message` y recarga de mensajes.
-
-## CSS Personalizado
-- Archivo: `app/profesional-modern/webapp/css/custom.css`.
-- Variables, tema oscuro y estilos de burbujas.
-
-## Cómo abrir
-- UI moderna: `http://localhost:4004/ui/profesional-modern/`.
-- Servicio: `http://localhost:4004/odata/v4/service-connect/`.
+## Endpoints OData (Para consumo externo)
+- **Base URL**: `http://localhost:4004/odata/v4/service-connect`
+- **Metadata**: `http://localhost:4004/odata/v4/service-connect/$metadata`
 
 ## Modelo de Datos (CDS)
 - <span style="color:#0b5394">Professional</span>

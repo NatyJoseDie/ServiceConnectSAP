@@ -2,6 +2,7 @@ using { serviceconnect } from '../db/schema';
 
 service ServiceConnectService @(path: '/odata/v4/service-connect') {
   entity Professional      as projection on serviceconnect.Professional;
+  entity Tradesman         as projection on serviceconnect.Tradesman;
   entity Trade             as projection on serviceconnect.Trade;
   entity Client            as projection on serviceconnect.Client;
   entity ServiceCategory   as projection on serviceconnect.ServiceCategory;
@@ -12,6 +13,7 @@ service ServiceConnectService @(path: '/odata/v4/service-connect') {
   entity Specialization    as projection on serviceconnect.Specialization;
   entity SubSpecialization as projection on serviceconnect.SubSpecialization;
   entity ProfessionalSpecialization as projection on serviceconnect.ProfessionalSpecialization;
+  entity TradesmanSpecialization as projection on serviceconnect.TradesmanSpecialization;
   entity AvailabilitySlot  as projection on serviceconnect.AvailabilitySlot;
   entity MessageThread     as projection on serviceconnect.MessageThread;
   entity Message           as projection on serviceconnect.Message;
@@ -19,6 +21,11 @@ service ServiceConnectService @(path: '/odata/v4/service-connect') {
   action assignProfessional(
     clientRequest_ID : UUID,
     professional_ID  : UUID
+  ) returns Assignment;
+
+  action assignTradesman(
+    clientRequest_ID : UUID,
+    tradesman_ID     : UUID
   ) returns Assignment;
 
   action autoAssignNearest(
@@ -33,6 +40,14 @@ service ServiceConnectService @(path: '/odata/v4/service-connect') {
     maxRadiusKm       : Integer,
     limit             : Integer
   ) returns array of serviceconnect.NearbyProfessionalResult;
+
+  action findNearestTradesmen(
+    lat               : Decimal(9,6),
+    lng               : Decimal(9,6),
+    specialization_ID : UUID,
+    maxRadiusKm       : Integer,
+    limit             : Integer
+  ) returns array of serviceconnect.NearbyTradesmanResult;
 
   action markMessageRead(message_ID : UUID) returns Boolean;
 
@@ -97,31 +112,47 @@ annotate ServiceConnectService.Professional with @UI.PresentationVariant: {
 annotate ServiceConnectService.Professional with @UI: {
   HeaderInfo: {
     TypeName: 'Profesional',
+    TypeNamePlural: 'Profesionales',
     Title: { Value: fullName },
-    Description: { Value: professionType }
+    Description: { Value: professionType },
+    ImageUrl: 'https://ui5.sap.com/test-resources/sap/ui/documentation/sdk/images/HT-1000.jpg' // Placeholder visual
   },
   SelectionFields: [
-    { $PropertyPath: fullName },
+    { $PropertyPath: professionType },
     { $PropertyPath: location },
-    { $PropertyPath: availability }
+    { $PropertyPath: rating }
+  ],
+  LineItem: [
+    { $Type: 'UI.DataField', Value: fullName,       Label: 'Nombre' },
+    { $Type: 'UI.DataField', Value: professionType, Label: 'Profesión', Criticality: #Information },
+    { $Type: 'UI.DataField', Value: location,       Label: 'Ubicación' },
+    { $Type: 'UI.DataFieldForAnnotation', Target: '@UI.DataPoint#RatingIndicator', Label: 'Calificación' },
+    { $Type: 'UI.DataField', Value: availability,   Label: 'Disponible', Criticality: #Positive }
   ],
   Facets: [
-    { $Type: 'UI.ReferenceFacet', Label: 'Perfil',   Target: '@UI.FieldGroup#Main' },
-    { $Type: 'UI.ReferenceFacet', Label: 'Contacto', Target: '@UI.FieldGroup#Contact' },
-    { $Type: 'UI.ReferenceFacet', Label: 'Rating',   Target: '@UI.DataPoint#Rating' }
+    { $Type: 'UI.CollectionFacet', Label: 'Información General', ID: 'GeneralInfo', Facets: [
+        { $Type: 'UI.ReferenceFacet', Label: 'Datos de Contacto', Target: '@UI.FieldGroup#Contact' },
+        { $Type: 'UI.ReferenceFacet', Label: 'Detalles Profesionales', Target: '@UI.FieldGroup#ProfessionalDetails' }
+    ]},
+    { $Type: 'UI.ReferenceFacet', Label: 'Disponibilidad', Target: '@UI.LineItem#Availability' }
   ],
-  FieldGroup#Main: { Data: [
-    { $Type: 'UI.DataField', Value: fullName,       Label: 'Nombre' },
-    { $Type: 'UI.DataField', Value: professionType, Label: 'Profesión' },
-    { $Type: 'UI.DataField', Value: location,       Label: 'Ubicación' },
-    { $Type: 'UI.DataField', Value: registrationNumber, Label: 'Matrícula' },
-    { $Type: 'UI.DataFieldWithNavigationPath', Value: trade_ID, Label: 'Oficio', NavigationPropertyPath: trade_ID }
-  ]},
   FieldGroup#Contact: { Data: [
-    { $Type: 'UI.DataField', Value: email, Label: 'Email' },
-    { $Type: 'UI.DataField', Value: phone, Label: 'Teléfono' }
+    { $Type: 'UI.DataField', Value: email, Label: 'Correo Electrónico', IconUrl: 'sap-icon://email' },
+    { $Type: 'UI.DataField', Value: phone, Label: 'Teléfono', IconUrl: 'sap-icon://phone' },
+    { $Type: 'UI.DataField', Value: location, Label: 'Dirección' }
   ]},
-  DataPoint#Rating: { Title: 'Rating', Value: rating }
+  FieldGroup#ProfessionalDetails: { Data: [
+    { $Type: 'UI.DataField', Value: registrationNumber, Label: 'Matrícula' },
+    { $Type: 'UI.DataField', Value: isVerified, Label: 'Verificado' },
+    { $Type: 'UI.DataFieldWithNavigationPath', Value: trade_ID, Label: 'Oficio Principal', NavigationPropertyPath: trade },
+  ]},
+  DataPoint#RatingIndicator: {
+    Value: rating,
+    Title: 'Rating',
+    TargetValue: 5,
+    Visualization: #Rating
+  },
+  DataPoint#Rating: { Title: 'Rating Promedio', Value: rating, Visualization: #Rating }
 };
 
 annotate ServiceConnectService.ClientRequest with @UI.LineItem: [
@@ -167,8 +198,8 @@ annotate ServiceConnectService.ClientRequest with @UI.PresentationVariant: {
 
 annotate ServiceConnectService.Assignment with @UI.LineItem: [
   { $Type: 'UI.DataField', Value: ID,           Label: 'ID' },
-  { $Type: 'UI.DataFieldWithNavigationPath', Value: professional_ID, Label: 'Profesional', NavigationPropertyPath: professional_ID },
-  { $Type: 'UI.DataFieldWithNavigationPath', Value: clientRequest_ID, Label: 'Solicitud', NavigationPropertyPath: clientRequest_ID },
+  { $Type: 'UI.DataFieldWithNavigationPath', Value: professional_ID, Label: 'Profesional', NavigationPropertyPath: professional },
+  { $Type: 'UI.DataFieldWithNavigationPath', Value: clientRequest_ID, Label: 'Solicitud', NavigationPropertyPath: clientRequest },
   { $Type: 'UI.DataField', Value: dateAssigned, Label: 'Fecha asignación' },
   { $Type: 'UI.DataField', Value: status,       Label: 'Estado' }
 ];
@@ -274,7 +305,7 @@ annotate ServiceConnectService.Review with @UI.PresentationVariant: {
 annotate ServiceConnectService.Specialization with @UI.LineItem: [
   { $Type: 'UI.DataField', Value: name,        Label: 'Nombre' },
   { $Type: 'UI.DataField', Value: description, Label: 'Descripción' },
-  { $Type: 'UI.DataFieldWithNavigationPath', Value: trade_ID, Label: 'Oficio', NavigationPropertyPath: trade_ID },
+  { $Type: 'UI.DataFieldWithNavigationPath', Value: trade_ID, Label: 'Oficio', NavigationPropertyPath: trade },
   { $Type: 'UI.DataField', Value: active,      Label: 'Activo' }
 ];
 annotate ServiceConnectService.Specialization with @UI: {
@@ -288,7 +319,7 @@ annotate ServiceConnectService.Specialization with @UI: {
   FieldGroup#Main: { Data: [
     { $Type: 'UI.DataField', Value: name,        Label: 'Nombre' },
     { $Type: 'UI.DataField', Value: description, Label: 'Descripción' },
-    { $Type: 'UI.DataFieldWithNavigationPath', Value: trade_ID, Label: 'Oficio', NavigationPropertyPath: trade_ID },
+    { $Type: 'UI.DataFieldWithNavigationPath', Value: trade_ID, Label: 'Oficio', NavigationPropertyPath: trade },
     { $Type: 'UI.DataField', Value: active,      Label: 'Activo' }
   ]}
 };

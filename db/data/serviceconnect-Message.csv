@@ -1,3 +1,3 @@
-ID,thread_ID_ID,senderRole,senderProfessional_ID_ID,senderClient_ID_ID,content,createdAt,isRead
+ID,thread_ID,senderRole,senderProfessional_ID,senderClient_ID,content,createdAt,isRead
 ffff0000-0000-0000-0000-ffff00000001,eeeeffff-0000-0000-0000-eeeeffff0001,client,,aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa,"Hola, necesito confirmar disponibilidad.",2025-01-01T12:05:00Z,false
 ffff0000-0000-0000-0000-ffff00000002,eeeeffff-0000-0000-0000-eeeeffff0001,professional,77777777-7777-7777-7777-777777777777,,"Hola Ana, tengo disponibilidad hoy 14hs.",2025-01-01T12:06:00Z,false

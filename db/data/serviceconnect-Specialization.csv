@@ -1,4 +1,4 @@
-ID,name,description,trade_ID_ID,active
+ID,name,description,trade_ID,active
 aaaabbbb-0000-0000-0000-aaaabbbb0001,Penal,Abogacía penal,33333333-3333-3333-3333-333333333333,true
 aaaabbbb-0000-0000-0000-aaaabbbb0002,Laboral,Abogacía laboral,33333333-3333-3333-3333-333333333333,true
 aaaabbbb-0000-0000-0000-aaaabbbb0003,Familia,Abogacía de familia,33333333-3333-3333-3333-333333333333,true
