@@ -1,0 +1,44 @@
+_schema-version: '3.1'
+ID: serviceconnect
+version: 1.0.0
+description: "ServiceConnect – Plataforma de Profesionales & Oficios (SAP CAP)"
+parameters:
+  enable-parallel-deployments: true
+
+build-parameters:
+  before-all:
+    - builder: custom
+      commands:
+        - npm install
+        - npx cds build --production
+
+modules:
+  # --------------------- BACKEND MODULE -----------------------
+  - name: serviceconnect-srv
+    type: nodejs
+    path: gen/srv
+    parameters:
+      buildpack: nodejs_buildpack
+    requires:
+      - name: serviceconnect-db
+    provides:
+      - name: srv-api
+        properties:
+          srv-url: ${default-url}
+
+  # --------------------- DB DEPLOYER --------------------------
+  - name: serviceconnect-db-deployer
+    type: hdb
+    path: gen/db
+    parameters:
+      buildpack: nodejs_buildpack
+    requires:
+      - name: serviceconnect-db
+
+resources:
+  # ----------------------- HANA CLOUD --------------------------
+  - name: serviceconnect-db
+    type: com.sap.xs.hdi-container
+    parameters:
+      service: hana
+      service-plan: hdi-shared

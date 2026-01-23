@@ -21,5 +21,10 @@ out_*.xml
 dist/
 build/
 
+# Build and Deploy artifacts
+gen/
+mta_archives/
+*.mtar
+
 # Trae/IDE caches
 .trae/
